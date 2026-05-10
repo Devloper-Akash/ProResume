@@ -1,0 +1,132 @@
+import React from 'react';
+import { useResume } from '../../context/ResumeContext';
+import { Plus, Trash2 } from 'lucide-react';
+
+const EducationForm = () => {
+  const { resumeData, updateSection } = useResume();
+  const { education } = resumeData;
+
+  const handleChange = (id, field, value) => {
+    const updatedEducation = education.map(edu => 
+      edu.id === id ? { ...edu, [field]: value } : edu
+    );
+    updateSection('education', updatedEducation);
+  };
+
+  const handleAdd = () => {
+    const newEdu = {
+      id: Date.now().toString(),
+      degree: '',
+      school: '',
+      startDate: '',
+      endDate: '',
+      cgpa: '',
+      description: ''
+    };
+    updateSection('education', [...education, newEdu]);
+  };
+
+  const handleDelete = (id) => {
+    updateSection('education', education.filter(edu => edu.id !== id));
+  };
+
+  return (
+    <div className="form-section">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--primary-color)', margin: 0 }}>Education</h3>
+        <button onClick={handleAdd} className="btn" style={{ backgroundColor: '#eef2ff', color: 'var(--primary-color)', padding: '0.5rem 1rem' }}>
+          <Plus size={16} /> Add Education
+        </button>
+      </div>
+
+      {education.map((edu, index) => (
+        <div key={edu.id} style={{ 
+          backgroundColor: '#f8fafc', 
+          padding: '1.5rem', 
+          borderRadius: 'var(--radius-md)', 
+          border: '1px solid var(--border-color)',
+          marginBottom: '1.5rem',
+          position: 'relative'
+        }}>
+          <button 
+            onClick={() => handleDelete(edu.id)}
+            style={{ position: 'absolute', top: '1rem', right: '1rem', color: '#ef4444' }}
+            title="Remove"
+          >
+            <Trash2 size={18} />
+          </button>
+
+          <div className="grid-2">
+            <div className="form-group">
+              <label className="form-label">Degree / Program</label>
+              <input 
+                type="text" 
+                value={edu.degree} 
+                onChange={(e) => handleChange(edu.id, 'degree', e.target.value)} 
+                placeholder="Bachelor of Science in Computer Science" 
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">School / University</label>
+              <input 
+                type="text" 
+                value={edu.school} 
+                onChange={(e) => handleChange(edu.id, 'school', e.target.value)} 
+                placeholder="University of Technology" 
+              />
+            </div>
+          </div>
+
+          <div className="grid-2">
+            <div className="form-group">
+              <label className="form-label">Start Date</label>
+              <input 
+                type="text" 
+                value={edu.startDate} 
+                onChange={(e) => handleChange(edu.id, 'startDate', e.target.value)} 
+                placeholder="Sep 2015" 
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">End Date</label>
+              <input 
+                type="text" 
+                value={edu.endDate} 
+                onChange={(e) => handleChange(edu.id, 'endDate', e.target.value)} 
+                placeholder="May 2019" 
+              />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">CGPA / Percentage (Optional)</label>
+            <input 
+              type="text" 
+              value={edu.cgpa || ''} 
+              onChange={(e) => handleChange(edu.id, 'cgpa', e.target.value)} 
+              placeholder="e.g. 3.8/4.0 or 85%" 
+            />
+          </div>
+
+          <div className="form-group" style={{ marginBottom: 0 }}>
+            <label className="form-label">Description (Optional)</label>
+            <textarea 
+              value={edu.description} 
+              onChange={(e) => handleChange(edu.id, 'description', e.target.value)} 
+              placeholder="Relevant coursework, honors, GPA..."
+              rows={2}
+            />
+          </div>
+        </div>
+      ))}
+      
+      {education.length === 0 && (
+        <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)', backgroundColor: '#f8fafc', borderRadius: 'var(--radius-md)', border: '1px dashed var(--border-color)' }}>
+          No education added yet.
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default EducationForm;
