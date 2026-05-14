@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FileText, LogOut, LogIn, Sparkles } from 'lucide-react';
+import { FileText, LogOut, LogIn, Sparkles, LayoutDashboard } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import AuthModal from './AuthModal';
 
@@ -141,6 +141,23 @@ const Navbar = () => {
       gap: '0.6rem',
       height: '36px',
     },
+    btnDashboard: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '0.3rem',
+      height: '36px',
+      padding: '0 0.85rem',
+      fontSize: '0.85rem',
+      fontWeight: 500,
+      color: '#4F46E5',
+      background: 'rgba(79,70,229,0.07)',
+      border: '1px solid rgba(79,70,229,0.25)',
+      borderRadius: 'var(--radius-md)',
+      textDecoration: 'none',
+      whiteSpace: 'nowrap',
+      transition: 'all 0.2s',
+    },
     avatar: {
       width: '32px',
       height: '32px',
@@ -257,6 +274,19 @@ const Navbar = () => {
 
           {user ? (
             <div style={styles.userSection}>
+              <Link 
+                to="/dashboard" 
+                style={styles.btnDashboard}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = 'rgba(79,70,229,0.13)';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = 'rgba(79,70,229,0.07)';
+                }}
+              >
+                <LayoutDashboard size={14} />
+                Dashboard
+              </Link>
               <div style={styles.avatar} title={user.email}>
                 {getInitials(user.email)}
               </div>

@@ -5,6 +5,7 @@ import { ResumeProvider } from './context/ResumeContext';
 import Navbar from './components/layout/Navbar';
 import Home from './pages/Home';
 import Builder from './pages/Builder';
+import Dashboard from './pages/Dashboard';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/builder" element={<Builder />} />
+              <Route path="/dashboard" element={<Dashboard />} />
             </Routes>
           </main>
         </div>

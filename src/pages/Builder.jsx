@@ -2,8 +2,9 @@ import React, { useRef, useState } from 'react';
 import { useReactToPrint } from 'react-to-print';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
-import { Download, Printer, Settings, User, Briefcase, GraduationCap, Code, LayoutDashboard } from 'lucide-react';
+import { Download, Printer, Settings, User, Briefcase, GraduationCap, Code, LayoutDashboard, Save } from 'lucide-react';
 import { useResume } from '../context/ResumeContext';
+import { supabase } from '../utils/supabase';
 import TemplateRenderer from '../components/resume-templates/TemplateRenderer';
 import PersonalInfoForm from '../components/builder/PersonalInfoForm';
 import ExperienceForm from '../components/builder/ExperienceForm';
@@ -63,12 +64,42 @@ const Builder = () => {
     }
   };
 
+  const handleSaveAction = async () => {
+    try {
+      const resumeName = prompt("Enter a name for this resume:", `${resumeData.personalInfo.firstName || 'My'} Resume`);
+      if (!resumeName) return;
+
+      const { error } = await supabase.from('resumes').insert({
+        user_id: user.id,
+        resume_name: resumeName,
+        resume_data: resumeData,
+      });
+
+      if (error) throw error;
+      alert("Resume saved successfully!");
+    } catch (error) {
+      console.error("Error saving resume:", error);
+      alert("Failed to save resume.");
+    }
+  };
+
+  const handleSave = () => {
+    if (!user) {
+      setPendingAction('save');
+      setIsAuthModalOpen(true);
+    } else {
+      handleSaveAction();
+    }
+  };
+
   const handleLoginSuccess = () => {
     setIsAuthModalOpen(false);
     if (pendingAction === 'print') {
       handlePrintAction();
     } else if (pendingAction === 'download') {
       handleDownloadPDFAction();
+    } else if (pendingAction === 'save') {
+      handleSaveAction();
     }
     setPendingAction(null);
   };
@@ -141,6 +172,9 @@ const Builder = () => {
           backgroundColor: 'var(--surface-color)', padding: '0.75rem 1.5rem', 
           borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-sm)' 
         }}>
+          <button onClick={handleSave} className="btn btn-outline" style={{ padding: '0.5rem 1rem', color: '#4F46E5', borderColor: '#4F46E5' }}>
+            <Save size={18} /> Save to Dashboard
+          </button>
           <button onClick={handlePrint} className="btn btn-outline" style={{ padding: '0.5rem 1rem' }}>
             <Printer size={18} /> Print
           </button>

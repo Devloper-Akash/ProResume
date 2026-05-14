@@ -114,6 +114,10 @@ export const ResumeProvider = ({ children }) => {
     setResumeData(emptyResumeData);
   };
 
+  const loadResumeData = (data) => {
+    setResumeData(data);
+  };
+
   return (
     <ResumeContext.Provider value={{
       resumeData,
@@ -121,7 +125,8 @@ export const ResumeProvider = ({ children }) => {
       updateSection,
       updateSettings,
       loadDemoData,
-      resetData
+      resetData,
+      loadResumeData
     }}>
       {children}
     </ResumeContext.Provider>
