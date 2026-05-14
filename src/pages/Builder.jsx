@@ -50,7 +50,31 @@ const Builder = () => {
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
       
       pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`${resumeData.personalInfo.firstName || 'Resume'}_${resumeData.personalInfo.lastName || 'Draft'}.pdf`);
+      
+      const fileName = `${resumeData.personalInfo.firstName || 'Resume'}_${resumeData.personalInfo.lastName || 'Draft'}.pdf`;
+      
+      // Save locally
+      pdf.save(fileName);
+
+      // Upload to Supabase Storage if user is authenticated
+      if (user) {
+        const pdfBlob = pdf.output('blob');
+        const timestamp = new Date().getTime();
+        const storagePath = `${user.id}/${timestamp}_${fileName}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('resumes')
+          .upload(storagePath, pdfBlob, {
+            contentType: 'application/pdf',
+            upsert: true
+          });
+          
+        if (uploadError) {
+          console.error("Error uploading PDF to storage:", uploadError);
+        } else {
+          console.log("PDF successfully saved to Supabase storage");
+        }
+      }
     } catch (error) {
       console.error("Error generating PDF:", error);
       alert("Failed to generate PDF. Please try printing instead.");
