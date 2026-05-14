@@ -12,6 +12,7 @@ import EducationForm from '../components/builder/EducationForm';
 import SkillsForm from '../components/builder/SkillsForm';
 import SettingsForm from '../components/builder/SettingsForm';
 import AuthModal from '../components/layout/AuthModal';
+import SaveResumeModal from '../components/builder/SaveResumeModal';
 import { useAuth } from '../context/AuthContext';
 
 const Builder = () => {
@@ -20,6 +21,7 @@ const Builder = () => {
   const componentRef = useRef(null);
   const [activeTab, setActiveTab] = useState('personal');
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState(null);
 
   const handlePrintAction = useReactToPrint({
@@ -64,11 +66,8 @@ const Builder = () => {
     }
   };
 
-  const handleSaveAction = async () => {
+  const handleConfirmSave = async (resumeName) => {
     try {
-      const resumeName = prompt("Enter a name for this resume:", `${resumeData.personalInfo.firstName || 'My'} Resume`);
-      if (!resumeName) return;
-
       const { error } = await supabase.from('resumes').insert({
         user_id: user.id,
         resume_name: resumeName,
@@ -77,6 +76,7 @@ const Builder = () => {
 
       if (error) throw error;
       alert("Resume saved successfully!");
+      setIsSaveModalOpen(false);
     } catch (error) {
       console.error("Error saving resume:", error);
       alert("Failed to save resume.");
@@ -88,7 +88,7 @@ const Builder = () => {
       setPendingAction('save');
       setIsAuthModalOpen(true);
     } else {
-      handleSaveAction();
+      setIsSaveModalOpen(true);
     }
   };
 
@@ -99,7 +99,7 @@ const Builder = () => {
     } else if (pendingAction === 'download') {
       handleDownloadPDFAction();
     } else if (pendingAction === 'save') {
-      handleSaveAction();
+      setIsSaveModalOpen(true);
     }
     setPendingAction(null);
   };
@@ -203,6 +203,12 @@ const Builder = () => {
         isOpen={isAuthModalOpen} 
         onClose={() => setIsAuthModalOpen(false)} 
         onLoginSuccess={handleLoginSuccess}
+      />
+      <SaveResumeModal
+        isOpen={isSaveModalOpen}
+        onClose={() => setIsSaveModalOpen(false)}
+        onSave={handleConfirmSave}
+        defaultName={`${resumeData.personalInfo?.firstName || 'My'} Resume`}
       />
     </div>
   );
