@@ -9,8 +9,21 @@ export default function PayButton({ onSuccess }) {
   const { user } = useAuth();
 
   const handlePayment = async () => {
-    if (!razorpayLoaded) return alert('Payment gateway not loaded. Please refresh.');
+    if (!razorpayLoaded || !window.Razorpay) {
+      return alert('Payment gateway is still loading. Please wait a moment or refresh.');
+    }
     if (!user) return alert('Please sign in first to upgrade.');
+
+    const keyId = import.meta.env.VITE_RAZORPAY_KEY_ID;
+    if (!keyId) {
+      console.error('VITE_RAZORPAY_KEY_ID environment variable is missing.');
+      return alert('Configuration Error: Razorpay Key ID is missing. Please configure VITE_RAZORPAY_KEY_ID in your Vercel project settings.');
+    }
+
+    if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+      console.error('Supabase keys are missing.');
+      return alert('Configuration Error: Supabase keys are missing. Please configure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your Vercel project settings.');
+    }
 
     const orderId = `order_${Date.now()}`;
 
