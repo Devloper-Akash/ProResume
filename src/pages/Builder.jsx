@@ -78,17 +78,31 @@ const Builder = () => {
     if (!element) return;
 
     try {
+      // Temporarily reset transform so html2canvas captures at full resolution
+      const originalTransform = element.style.transform;
+      const originalTransition = element.style.transition;
+      element.style.transform = 'scale(1)';
+      element.style.transition = 'none';
+
       const canvas = await html2canvas(element, { 
-        scale: 1.5, 
+        scale: 2, 
         useCORS: true,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        letterRendering: true,
+        logging: false,
       });
-      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+      // Restore original transform
+      element.style.transform = originalTransform;
+      element.style.transition = originalTransition;
+
+      // Use PNG for lossless quality — crisp text without JPEG artifacts
+      const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
       
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
       
       const fileName = `${resumeData.personalInfo.firstName || 'Resume'}_${resumeData.personalInfo.lastName || 'Draft'}.pdf`;
       
