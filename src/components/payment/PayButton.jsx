@@ -14,12 +14,10 @@ export default function PayButton({ onSuccess }) {
 
     const orderId = `order_${Date.now()}`;
 
-    try {
-      await saveOrder({ userId: user.id, orderId, amount: AMOUNT });
-    } catch (err) {
+    // Save order in background to maintain synchronous execution flow for mobile Safari gesture token
+    saveOrder({ userId: user.id, orderId, amount: AMOUNT }).catch(err => {
       console.error('Save Order Error:', err);
-      return alert('Failed to initiate order. Try again. Error: ' + err.message);
-    }
+    });
 
     const options = {
       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
