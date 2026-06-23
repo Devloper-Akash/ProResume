@@ -1,10 +1,34 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useResume } from '../../context/ResumeContext';
-import { Palette, Type, LayoutTemplate } from 'lucide-react';
+import { Palette, Type, LayoutTemplate, Lock } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { checkProStatus } from '../../services/paymentService';
+import PricingModal from '../payment/PricingModal';
 
 const SettingsForm = () => {
   const { resumeData, updateSettings } = useResume();
   const { settings } = resumeData;
+  const { user } = useAuth();
+  const [showPricing, setShowPricing] = useState(false);
+  const [loadingTemplate, setLoadingTemplate] = useState(null);
+  const [isPro, setIsPro] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      setIsPro(false);
+      return;
+    }
+    const checkUserPro = async () => {
+      try {
+        const status = await checkProStatus(user.id);
+        setIsPro(status);
+      } catch (err) {
+        console.error('Error checking pro status:', err);
+      }
+    };
+    checkUserPro();
+  }, [user]);
+
 
   const colors = [
     '#4F46E5', // Indigo
@@ -26,10 +50,28 @@ const SettingsForm = () => {
   const templates = [
     { id: 'modern', name: 'Modern', description: 'Clean layout with two columns' },
     { id: 'minimal', name: 'Minimal', description: 'Classic top-down layout' },
-    { id: 'creative', name: 'Creative', description: 'Sidebar layout with accent colors' },
-    { id: 'corporate', name: 'Corporate', description: 'Formal structured layout' },
-    { id: 'compact', name: 'Compact', description: 'Space-saving fresher layout' },
+    { id: 'creative', name: 'Creative', description: 'Sidebar layout with accent colors', isPremium: true },
+    { id: 'corporate', name: 'Corporate', description: 'Formal structured layout', isPremium: true },
+    { id: 'compact', name: 'Compact', description: 'Space-saving fresher layout', isPremium: true },
   ];
+
+  const handleTemplateClick = async (tpl) => {
+    if (tpl.isPremium) {
+      if (!user) {
+        alert('Please sign in first to access premium templates.');
+        return;
+      }
+      setLoadingTemplate(tpl.id);
+      const isPro = await checkProStatus(user.id);
+      setLoadingTemplate(null);
+      
+      if (!isPro) {
+        setShowPricing(true);
+        return;
+      }
+    }
+    updateSettings('template', tpl.id);
+  };
 
   return (
     <div className="form-section">
@@ -44,17 +86,26 @@ const SettingsForm = () => {
           {templates.map(tpl => (
             <div 
               key={tpl.id}
-              onClick={() => updateSettings('template', tpl.id)}
+              onClick={() => handleTemplateClick(tpl)}
               style={{
+                position: 'relative',
                 border: `2px solid ${settings.template === tpl.id ? 'var(--primary-color)' : 'var(--border-color)'}`,
                 borderRadius: 'var(--radius-md)',
                 padding: '1rem',
                 cursor: 'pointer',
                 backgroundColor: settings.template === tpl.id ? '#eef2ff' : 'var(--surface-color)',
-                transition: 'all 0.2s'
+                transition: 'all 0.2s',
+                opacity: loadingTemplate === tpl.id ? 0.5 : 1
               }}
             >
-              <h4 style={{ fontWeight: 600, marginBottom: '0.25rem' }}>{tpl.name}</h4>
+              {tpl.isPremium && !isPro && (
+                <div style={{ position: 'absolute', top: '10px', right: '10px', color: '#f59e0b' }}>
+                  <Lock size={16} />
+                </div>
+              )}
+              <h4 style={{ fontWeight: 600, marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {tpl.name} {loadingTemplate === tpl.id && <span style={{fontSize: '12px', color: 'var(--text-muted)'}}>Checking...</span>}
+              </h4>
               <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{tpl.description}</p>
             </div>
           ))}
@@ -104,6 +155,16 @@ const SettingsForm = () => {
           ))}
         </select>
       </div>
+
+      {showPricing && (
+        <PricingModal
+          onClose={() => setShowPricing(false)}
+          onSuccess={() => {
+            setIsPro(true);
+            setShowPricing(false);
+          }}
+        />
+      )}
     </div>
   );
 };

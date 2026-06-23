@@ -4,6 +4,7 @@ import { FileText, Calendar, Edit, Trash2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useResume } from '../context/ResumeContext';
 import { supabase } from '../utils/supabase';
+import Footer from '../components/layout/Footer';
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -67,9 +68,10 @@ const Dashboard = () => {
   };
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '3rem 2rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '2rem', fontFamily: 'var(--font-outfit)', color: 'var(--text-main)' }}>
+    <>
+      <div className="dashboard-container">
+      <div className="dashboard-header">
+        <h1 style={{ fontSize: '2rem', fontFamily: 'var(--font-outfit)', color: 'var(--text-main)', margin: 0 }}>
           My Dashboard
         </h1>
         <button 
@@ -206,7 +208,9 @@ const Dashboard = () => {
           ))}
         </div>
       )}
-    </div>
+      </div>
+      <Footer />
+    </>
   );
 };
 
