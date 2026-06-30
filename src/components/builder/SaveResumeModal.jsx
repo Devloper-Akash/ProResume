@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 const SaveResumeModal = ({ isOpen, onClose, onSave, defaultName }) => {
   const [resumeName, setResumeName] = useState(defaultName);
@@ -18,43 +19,29 @@ const SaveResumeModal = ({ isOpen, onClose, onSave, defaultName }) => {
     }
   };
 
-  return (
-    <div style={{
-      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-      backgroundColor: 'rgba(0,0,0,0.5)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      zIndex: 1000
-    }}>
-      <div style={{
-        backgroundColor: 'var(--surface-color)', padding: '2rem', borderRadius: 'var(--radius-lg)',
-        width: '100%', maxWidth: '400px', boxShadow: 'var(--shadow-lg)'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-main)' }}>
-            Save Resume
-          </h2>
-          <button onClick={onClose} style={{ fontSize: '1.5rem', lineHeight: 1, color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}>&times;</button>
+  const modalContent = (
+    <div className="modal-overlay" onClick={onClose}>
+      <div 
+        className="modal-container"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="modal-decor-glow" />
+
+        <div className="modal-header">
+          <h2>Save Resume</h2>
+          <button onClick={onClose} className="modal-close-x">&times;</button>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-            <label className="form-label" style={{ display: 'block', marginBottom: '0.5rem', color: 'var(--text-main)', fontSize: '0.9rem', fontWeight: 500 }}>Resume Name</label>
+          <div className="form-group" style={{ marginBottom: '1.75rem' }}>
+            <label className="form-label">Resume Name</label>
             <input 
               type="text" 
               required 
               value={resumeName}
               onChange={(e) => setResumeName(e.target.value)}
               placeholder="e.g. Software Engineer Resume"
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                borderRadius: 'var(--radius-md)',
-                border: '1px solid var(--border-color)',
-                backgroundColor: 'var(--bg-color)',
-                color: 'var(--text-main)',
-                fontSize: '1rem',
-                outline: 'none'
-              }}
+              className="form-input"
               autoFocus
             />
           </div>
@@ -70,6 +57,8 @@ const SaveResumeModal = ({ isOpen, onClose, onSave, defaultName }) => {
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };
 
 export default SaveResumeModal;

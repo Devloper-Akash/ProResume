@@ -6,7 +6,7 @@ const AMOUNT = 299;
 
 export default function PayButton({ onSuccess }) {
   const razorpayLoaded = useRazorpay();
-  const { user } = useAuth();
+  const { user, refreshProStatus } = useAuth();
 
   const handlePayment = async () => {
     if (!razorpayLoaded || !window.Razorpay) {
@@ -47,6 +47,7 @@ export default function PayButton({ onSuccess }) {
             paymentId: response.razorpay_payment_id,
           });
           onSuccess?.();
+          refreshProStatus();
           alert('🎉 Payment successful! You are now a Pro user.');
         } catch (err) {
           console.error('Confirm Payment Error:', err);
@@ -66,17 +67,13 @@ export default function PayButton({ onSuccess }) {
     <button
       onClick={handlePayment}
       disabled={!razorpayLoaded}
+      className="btn btn-primary"
       style={{
-        background: razorpayLoaded ? '#6366f1' : '#94a3b8',
-        color: '#fff',
-        border: 'none',
-        padding: '12px 28px',
-        borderRadius: '8px',
-        fontSize: '16px',
-        fontWeight: '600',
-        cursor: razorpayLoaded ? 'pointer' : 'not-allowed',
         width: '100%',
         marginTop: '16px',
+        padding: '0.85rem',
+        background: !razorpayLoaded ? '#94a3b8' : undefined,
+        cursor: !razorpayLoaded ? 'not-allowed' : 'pointer'
       }}
     >
       {razorpayLoaded ? `Upgrade to Pro — ₹${AMOUNT}` : 'Loading...'}

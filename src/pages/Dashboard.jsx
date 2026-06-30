@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FileText, Calendar, Edit, Trash2 } from 'lucide-react';
+import { FileText, Calendar, Edit, Trash2, Plus, FolderOpen, Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useResume } from '../context/ResumeContext';
 import { supabase } from '../utils/supabase';
@@ -69,145 +70,99 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="dashboard-container">
-      <div className="dashboard-header">
-        <h1 style={{ fontSize: '2rem', fontFamily: 'var(--font-outfit)', color: 'var(--text-main)', margin: 0 }}>
-          My Dashboard
-        </h1>
-        <button 
-          onClick={() => navigate('/builder')}
-          className="btn btn-primary"
-          style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-        >
-          <Edit size={16} />
-          Create New Resume
-        </button>
-      </div>
-
-      {loading ? (
-        <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-muted)' }}>
-          Loading your resumes...
+      <div className="dashboard-wrapper">
+        {/* Decorative background elements using inline styles */}
+        <div style={{ pointerEvents: 'none', position: 'absolute', inset: 0 }}>
+          <div style={{ position: 'absolute', top: '-128px', right: '25%', height: '288px', width: '288px', borderRadius: '50%', backgroundColor: 'rgba(79, 70, 229, 0.05)', filter: 'blur(40px)' }} />
+          <div style={{ position: 'absolute', bottom: 0, left: '25%', height: '288px', width: '288px', borderRadius: '50%', backgroundColor: 'rgba(124, 58, 237, 0.05)', filter: 'blur(40px)' }} />
         </div>
-      ) : resumes.length === 0 ? (
-        <div style={{ 
-          textAlign: 'center', 
-          padding: '4rem', 
-          backgroundColor: 'var(--surface-color)', 
-          borderRadius: 'var(--radius-lg)',
-          border: '1px dashed var(--border-color)'
-        }}>
-          <FileText size={48} color="var(--text-muted)" style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-          <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem', color: 'var(--text-main)' }}>No resumes found</h3>
-          <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>You haven't saved any resumes to your dashboard yet.</p>
-          <button 
-            onClick={() => navigate('/builder')}
-            className="btn btn-primary"
-          >
-            Create Your First Resume
-          </button>
-        </div>
-      ) : (
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', 
-          gap: '1.5rem' 
-        }}>
-          {resumes.map((resume) => (
-            <div 
-              key={resume.id}
-              style={{
-                backgroundColor: 'var(--surface-color)',
-                borderRadius: 'var(--radius-lg)',
-                padding: '1.5rem',
-                border: '1px solid var(--border-color)',
-                boxShadow: 'var(--shadow-sm)',
-                transition: 'all 0.2s',
-                cursor: 'pointer',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '1rem'
-              }}
-              onClick={() => handleOpenResume(resume.resume_data)}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)';
-                e.currentTarget.style.boxShadow = 'var(--shadow-md)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-                <div style={{ 
-                  width: '40px', 
-                  height: '40px', 
-                  borderRadius: '8px', 
-                  backgroundColor: 'rgba(79,70,229,0.1)', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center',
-                  color: '#4F46E5'
-                }}>
-                  <FileText size={20} />
-                </div>
-                <button 
-                  onClick={(e) => handleDeleteResume(resume.id, e)}
-                  style={{
-                    background: 'transparent',
-                    border: 'none',
-                    color: 'var(--text-muted)',
-                    cursor: 'pointer',
-                    padding: '0.2rem',
-                    borderRadius: '4px',
-                    transition: 'all 0.2s'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = '#ef4444';
-                    e.currentTarget.style.backgroundColor = '#fef2f2';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = 'var(--text-muted)';
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                  }}
-                  title="Delete Resume"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
 
-              <div>
-                <h3 style={{ 
-                  fontSize: '1.1rem', 
-                  fontWeight: 600, 
-                  color: 'var(--text-main)',
-                  marginBottom: '0.25rem'
-                }}>
-                  {resume.resume_name}
-                </h3>
-                <div style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  gap: '0.4rem', 
-                  color: 'var(--text-muted)',
-                  fontSize: '0.85rem'
-                }}>
-                  <Calendar size={12} />
-                  <span>{formatDate(resume.updated_at)}</span>
-                </div>
-              </div>
-
-              <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid var(--border-color)' }}>
-                <button 
-                  className="btn btn-outline" 
-                  style={{ width: '100%', display: 'flex', justifyContent: 'center', gap: '0.5rem', fontSize: '0.9rem', padding: '0.5rem' }}
-                >
-                  <Edit size={14} /> Open to Download / Edit
-                </button>
-              </div>
+        <div className="container">
+          {/* Header */}
+          <div className="dashboard-header">
+            <div className="dashboard-title-area">
+              <h1>My Dashboard</h1>
+              <p>Manage and edit your saved resumes</p>
             </div>
-          ))}
+            <button
+              onClick={() => navigate('/builder')}
+              className="btn btn-primary"
+            >
+              <Plus size={16} />
+              Create New Resume
+            </button>
+          </div>
+
+          {/* Content */}
+          {loading ? (
+            <div className="loader-container">
+              <Loader2 size={32} className="loader-spinner" />
+              <span style={{ fontWeight: 500 }}>Loading your resumes...</span>
+            </div>
+          ) : resumes.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="empty-state"
+            >
+              <div className="empty-state-icon">
+                <FolderOpen size={32} />
+              </div>
+              <h3>No resumes found</h3>
+              <p>
+                You haven't saved any resumes to your dashboard yet. Start building your first one!
+              </p>
+              <button
+                onClick={() => navigate('/builder')}
+                className="btn btn-primary"
+              >
+                <Plus size={16} />
+                Create Your First Resume
+              </button>
+            </motion.div>
+          ) : (
+            <div className="resumes-grid">
+              {resumes.map((resume, idx) => (
+                <motion.div
+                  key={resume.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  onClick={() => handleOpenResume(resume.resume_data)}
+                  className="resume-card"
+                >
+                  <div className="resume-card-header">
+                    <div className="resume-icon-box">
+                      <FileText size={20} />
+                    </div>
+                    <button
+                      onClick={(e) => handleDeleteResume(resume.id, e)}
+                      className="btn-delete-card"
+                      title="Delete Resume"
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+
+                  <div className="resume-card-body">
+                    <h3>{resume.resume_name}</h3>
+                    <div className="resume-card-date">
+                      <Calendar size={12} />
+                      <span>{formatDate(resume.updated_at)}</span>
+                    </div>
+                  </div>
+
+                  <div className="resume-card-footer">
+                    <button className="resume-card-open-btn">
+                      <Edit size={13} />
+                      Open to Download / Edit
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
-      )}
       </div>
       <Footer />
     </>

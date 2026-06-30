@@ -32,28 +32,21 @@ const ExperienceForm = () => {
 
   return (
     <div className="form-section">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--primary-color)', margin: 0 }}>Work Experience</h3>
-        <button onClick={handleAdd} className="btn" style={{ backgroundColor: '#eef2ff', color: 'var(--primary-color)', padding: '0.5rem 1rem' }}>
-          <Plus size={16} /> Add Experience
+      <div className="form-section-header">
+        <h3>Work Experience</h3>
+        <button onClick={handleAdd} className="btn btn-secondary">
+          <Plus size={15} /> Add Experience
         </button>
       </div>
 
       {experience.map((exp, index) => (
-        <div key={exp.id} style={{ 
-          backgroundColor: '#f8fafc', 
-          padding: '1.5rem', 
-          borderRadius: 'var(--radius-md)', 
-          border: '1px solid var(--border-color)',
-          marginBottom: '1.5rem',
-          position: 'relative'
-        }}>
+        <div key={exp.id} className="item-card">
           <button 
             onClick={() => handleDelete(exp.id)}
-            style={{ position: 'absolute', top: '1rem', right: '1rem', color: '#ef4444' }}
+            className="btn-delete-item"
             title="Remove"
           >
-            <Trash2 size={18} />
+            <Trash2 size={16} />
           </button>
 
           <div className="grid-2">
@@ -64,6 +57,7 @@ const ExperienceForm = () => {
                 value={exp.title} 
                 onChange={(e) => handleChange(exp.id, 'title', e.target.value)} 
                 placeholder="Software Engineer" 
+                className="form-input"
               />
             </div>
             <div className="form-group">
@@ -73,6 +67,7 @@ const ExperienceForm = () => {
                 value={exp.company} 
                 onChange={(e) => handleChange(exp.id, 'company', e.target.value)} 
                 placeholder="Google" 
+                className="form-input"
               />
             </div>
           </div>
@@ -84,6 +79,7 @@ const ExperienceForm = () => {
               value={exp.location} 
               onChange={(e) => handleChange(exp.id, 'location', e.target.value)} 
               placeholder="Mountain View, CA" 
+              className="form-input"
             />
           </div>
 
@@ -95,6 +91,7 @@ const ExperienceForm = () => {
                 value={exp.startDate} 
                 onChange={(e) => handleChange(exp.id, 'startDate', e.target.value)} 
                 placeholder="Jan 2020" 
+                className="form-input"
               />
             </div>
             <div className="form-group">
@@ -104,6 +101,7 @@ const ExperienceForm = () => {
                 value={exp.endDate} 
                 onChange={(e) => handleChange(exp.id, 'endDate', e.target.value)} 
                 placeholder="Present" 
+                className="form-input"
               />
             </div>
           </div>
@@ -115,13 +113,14 @@ const ExperienceForm = () => {
               onChange={(e) => handleChange(exp.id, 'description', e.target.value)} 
               placeholder="Describe your responsibilities and achievements..."
               rows={4}
+              className="form-textarea"
             />
           </div>
         </div>
       ))}
       
       {experience.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)', backgroundColor: '#f8fafc', borderRadius: 'var(--radius-md)', border: '1px dashed var(--border-color)' }}>
+        <div className="empty-state" style={{ padding: '2.5rem 1.5rem', borderStyle: 'dashed' }}>
           No work experience added yet.
         </div>
       )}

@@ -32,28 +32,21 @@ const EducationForm = () => {
 
   return (
     <div className="form-section">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--primary-color)', margin: 0 }}>Education</h3>
-        <button onClick={handleAdd} className="btn" style={{ backgroundColor: '#eef2ff', color: 'var(--primary-color)', padding: '0.5rem 1rem' }}>
-          <Plus size={16} /> Add Education
+      <div className="form-section-header">
+        <h3>Education</h3>
+        <button onClick={handleAdd} className="btn btn-secondary">
+          <Plus size={15} /> Add Education
         </button>
       </div>
 
       {education.map((edu, index) => (
-        <div key={edu.id} style={{ 
-          backgroundColor: '#f8fafc', 
-          padding: '1.5rem', 
-          borderRadius: 'var(--radius-md)', 
-          border: '1px solid var(--border-color)',
-          marginBottom: '1.5rem',
-          position: 'relative'
-        }}>
+        <div key={edu.id} className="item-card">
           <button 
             onClick={() => handleDelete(edu.id)}
-            style={{ position: 'absolute', top: '1rem', right: '1rem', color: '#ef4444' }}
+            className="btn-delete-item"
             title="Remove"
           >
-            <Trash2 size={18} />
+            <Trash2 size={16} />
           </button>
 
           <div className="grid-2">
@@ -64,6 +57,7 @@ const EducationForm = () => {
                 value={edu.degree} 
                 onChange={(e) => handleChange(edu.id, 'degree', e.target.value)} 
                 placeholder="Bachelor of Science in Computer Science" 
+                className="form-input"
               />
             </div>
             <div className="form-group">
@@ -73,6 +67,7 @@ const EducationForm = () => {
                 value={edu.school} 
                 onChange={(e) => handleChange(edu.id, 'school', e.target.value)} 
                 placeholder="University of Technology" 
+                className="form-input"
               />
             </div>
           </div>
@@ -85,6 +80,7 @@ const EducationForm = () => {
                 value={edu.startDate} 
                 onChange={(e) => handleChange(edu.id, 'startDate', e.target.value)} 
                 placeholder="Sep 2015" 
+                className="form-input"
               />
             </div>
             <div className="form-group">
@@ -94,6 +90,7 @@ const EducationForm = () => {
                 value={edu.endDate} 
                 onChange={(e) => handleChange(edu.id, 'endDate', e.target.value)} 
                 placeholder="May 2019" 
+                className="form-input"
               />
             </div>
           </div>
@@ -105,6 +102,7 @@ const EducationForm = () => {
               value={edu.cgpa || ''} 
               onChange={(e) => handleChange(edu.id, 'cgpa', e.target.value)} 
               placeholder="e.g. 3.8/4.0 or 85%" 
+              className="form-input"
             />
           </div>
 
@@ -115,13 +113,14 @@ const EducationForm = () => {
               onChange={(e) => handleChange(edu.id, 'description', e.target.value)} 
               placeholder="Relevant coursework, honors, GPA..."
               rows={2}
+              className="form-textarea"
             />
           </div>
         </div>
       ))}
       
       {education.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)', backgroundColor: '#f8fafc', borderRadius: 'var(--radius-md)', border: '1px dashed var(--border-color)' }}>
+        <div className="empty-state" style={{ padding: '2.5rem 1.5rem', borderStyle: 'dashed' }}>
           No education added yet.
         </div>
       )}

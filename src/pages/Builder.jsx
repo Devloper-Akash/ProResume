@@ -201,38 +201,40 @@ const Builder = () => {
 
       {/* Sidebar / Form Area */}
       <div className={`builder-sidebar ${mobileView !== 'edit' ? 'mobile-hidden' : ''}`}>
-        <div style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)', display: 'flex', gap: '0.5rem', overflowX: 'auto' }}>
+        <div className="tabs-scroll-bar">
           <button 
             onClick={() => setActiveTab('personal')}
-            className={`btn ${activeTab === 'personal' ? 'btn-primary' : 'btn-outline'}`}
-            style={{ padding: '0.5rem 1rem', fontSize: '0.875rem', flexShrink: 0 }}
+            className={`tab-btn ${activeTab === 'personal' ? 'active' : ''}`}
           >
-            <User size={16} /> Personal
+            <User size={15} /> Personal
           </button>
           <button 
             onClick={() => setActiveTab('experience')}
-            className={`btn ${activeTab === 'experience' ? 'btn-primary' : 'btn-outline'}`}
-            style={{ padding: '0.5rem 1rem', fontSize: '0.875rem', flexShrink: 0 }}
+            className={`tab-btn ${activeTab === 'experience' ? 'active' : ''}`}
           >
-            <Briefcase size={16} /> Experience
+            <Briefcase size={15} /> Experience
           </button>
           <button 
             onClick={() => setActiveTab('education')}
-            className={`btn ${activeTab === 'education' ? 'btn-primary' : 'btn-outline'}`}
-            style={{ padding: '0.5rem 1rem', fontSize: '0.875rem', flexShrink: 0 }}
+            className={`tab-btn ${activeTab === 'education' ? 'active' : ''}`}
           >
-            <GraduationCap size={16} /> Education
+            <GraduationCap size={15} /> Education
+          </button>
+          <button 
+            onClick={() => setActiveTab('skills')}
+            className={`tab-btn ${activeTab === 'skills' ? 'active' : ''}`}
+          >
+            <Code size={15} /> Skills
           </button>
           <button 
             onClick={() => setActiveTab('settings')}
-            className={`btn ${activeTab === 'settings' ? 'btn-primary' : 'btn-outline'}`}
-            style={{ padding: '0.5rem 1rem', fontSize: '0.875rem', flexShrink: 0 }}
+            className={`tab-btn ${activeTab === 'settings' ? 'active' : ''}`}
           >
-            <Settings size={16} /> Settings
+            <Settings size={15} /> Settings
           </button>
         </div>
         
-        <div style={{ flex: 1, overflowY: 'auto', padding: '2rem' }}>
+        <div className="editor-pane">
           {activeTab === 'personal' && <PersonalInfoForm />}
           {activeTab === 'experience' && <ExperienceForm />}
           {activeTab === 'education' && <EducationForm />}
@@ -247,37 +249,29 @@ const Builder = () => {
         className={`builder-preview ${mobileView !== 'preview' ? 'mobile-hidden' : ''}`}
       >
         {/* Preview Toolbar */}
-        <div className="preview-toolbar" style={{ 
-          display: 'flex', gap: '1rem', marginBottom: '2rem', 
-          backgroundColor: 'var(--surface-color)', padding: '0.75rem 1.5rem', 
-          borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-sm)',
-          zIndex: 10
-        }}>
-          <button onClick={handleSave} className="btn btn-outline" style={{ padding: '0.5rem 1rem', color: '#4F46E5', borderColor: '#4F46E5' }}>
-            <Save size={18} /> Save to Dashboard
+        <div className="floating-toolbar">
+          <button onClick={handleSave} className="btn btn-secondary">
+            <Save size={16} /> Save to Dashboard
           </button>
-          <button onClick={handlePrint} className="btn btn-outline" style={{ padding: '0.5rem 1rem' }}>
-            <Printer size={18} /> Print
+          <button onClick={handlePrint} className="btn btn-outline">
+            <Printer size={16} /> Print
           </button>
-          <button onClick={handleDownloadPDF} className="btn btn-primary" style={{ padding: '0.5rem 1rem' }}>
-            <Download size={18} /> Download PDF
+          <button onClick={handleDownloadPDF} className="btn btn-primary">
+            <Download size={16} /> Download PDF
           </button>
         </div>
 
         {/* The Actual Resume Document */}
         <div 
           ref={componentRef}
-          className="resume-document"
+          className="resume-scale-wrapper"
           style={{ 
             width: '210mm', 
             minHeight: '297mm', 
             backgroundColor: 'white', 
-            boxShadow: 'var(--shadow-lg)',
-            padding: '20mm', // standard A4 padding
+            padding: '20mm', // A4 layout padding
             transform: `scale(${scale})`,
-            transformOrigin: 'top center',
             marginBottom: `calc(-297mm * ${1 - scale})`,
-            transition: 'transform 0.15s ease-out'
           }}
         >
           <TemplateRenderer />

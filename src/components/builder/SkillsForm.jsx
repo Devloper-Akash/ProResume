@@ -24,9 +24,9 @@ const SkillsForm = () => {
 
   return (
     <div className="form-section">
-      <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--primary-color)', marginBottom: '1.5rem' }}>Skills</h3>
+      <h3>Skills</h3>
       
-      <div className="form-group" style={{ position: 'relative' }}>
+      <div className="form-group">
         <label className="form-label">Add a skill</label>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
           <input 
@@ -35,37 +35,27 @@ const SkillsForm = () => {
             onChange={(e) => setInputValue(e.target.value)} 
             onKeyDown={handleAddSkill}
             placeholder="e.g. React, JavaScript, Project Management" 
+            className="form-input"
           />
           <button 
             onClick={handleAddSkill}
             className="btn btn-primary" 
-            style={{ padding: '0.5rem 1rem' }}
           >
             Add
           </button>
         </div>
       </div>
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '1.5rem' }}>
+      <div className="tags-pills-list">
         {skills.map((skill, index) => (
           <div 
             key={index} 
-            style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '0.5rem', 
-              backgroundColor: '#eef2ff', 
-              color: 'var(--primary-color)', 
-              padding: '0.5rem 1rem', 
-              borderRadius: '2rem',
-              fontWeight: 500,
-              fontSize: '0.875rem'
-            }}
+            className="pill-tag"
           >
             {skill}
             <button 
               onClick={() => handleRemoveSkill(skill)}
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6366f1', hover: { color: '#ef4444' } }}
+              className="pill-tag-remove-btn"
             >
               <X size={14} />
             </button>
@@ -74,7 +64,7 @@ const SkillsForm = () => {
       </div>
       
       {skills.length === 0 && (
-        <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-muted)' }}>
+        <div className="empty-state" style={{ padding: '2.5rem 1.5rem', borderStyle: 'dashed' }}>
           Add some skills to highlight your expertise.
         </div>
       )}

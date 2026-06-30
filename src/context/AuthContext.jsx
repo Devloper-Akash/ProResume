@@ -1,31 +1,56 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../utils/supabase';
+import { checkProStatus } from '../services/paymentService';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [isPro, setIsPro] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const fetchProStatus = async (userId) => {
+    if (!userId) {
+      setIsPro(false);
+      return;
+    }
+    try {
+      const pro = await checkProStatus(userId);
+      setIsPro(pro);
+    } catch (err) {
+      console.error('Error checking pro status:', err);
+      setIsPro(false);
+    }
+  };
 
   useEffect(() => {
     // Check active sessions and sets the user
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      fetchProStatus(currentUser?.id);
       setLoading(false);
     });
 
     // Listen for changes on auth state (logged in, signed out, etc.)
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      fetchProStatus(currentUser?.id);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email, password) => {
+  const signUp = async (email, password, username) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          username: username || '',
+        }
+      }
     });
     if (error) throw error;
     return data;
@@ -45,13 +70,21 @@ export const AuthProvider = ({ children }) => {
     if (error) throw error;
   };
 
+  const refreshProStatus = () => {
+    if (user?.id) {
+      fetchProStatus(user.id);
+    }
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
+      isPro,
       loading,
       signUp,
       signIn,
-      signOut
+      signOut,
+      refreshProStatus
     }}>
       {!loading && children}
     </AuthContext.Provider>
@@ -65,3 +98,4 @@ export const useAuth = () => {
   }
   return context;
 };
+

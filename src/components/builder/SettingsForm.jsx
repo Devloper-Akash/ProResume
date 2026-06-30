@@ -75,38 +75,30 @@ const SettingsForm = () => {
 
   return (
     <div className="form-section">
-      <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--primary-color)', marginBottom: '1.5rem' }}>Resume Settings</h3>
+      <h3>Resume Settings</h3>
       
       {/* Template Selection */}
       <div style={{ marginBottom: '2rem' }}>
-        <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
           <LayoutTemplate size={16} /> Template
         </label>
-        <div className="grid-2">
+        <div className="templates-grid-selector">
           {templates.map(tpl => (
             <div 
               key={tpl.id}
               onClick={() => handleTemplateClick(tpl)}
-              style={{
-                position: 'relative',
-                border: `2px solid ${settings.template === tpl.id ? 'var(--primary-color)' : 'var(--border-color)'}`,
-                borderRadius: 'var(--radius-md)',
-                padding: '1rem',
-                cursor: 'pointer',
-                backgroundColor: settings.template === tpl.id ? '#eef2ff' : 'var(--surface-color)',
-                transition: 'all 0.2s',
-                opacity: loadingTemplate === tpl.id ? 0.5 : 1
-              }}
+              className={`template-option-card ${settings.template === tpl.id ? 'active' : ''}`}
+              style={{ opacity: loadingTemplate === tpl.id ? 0.5 : 1 }}
             >
               {tpl.isPremium && !isPro && (
-                <div style={{ position: 'absolute', top: '10px', right: '10px', color: '#f59e0b' }}>
-                  <Lock size={16} />
+                <div className="template-option-lock-icon">
+                  <Lock size={14} />
                 </div>
               )}
-              <h4 style={{ fontWeight: 600, marginBottom: '0.25rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                {tpl.name} {loadingTemplate === tpl.id && <span style={{fontSize: '12px', color: 'var(--text-muted)'}}>Checking...</span>}
+              <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {tpl.name} {loadingTemplate === tpl.id && <span style={{fontSize: '11px', color: 'var(--text-muted)'}}>Checking...</span>}
               </h4>
-              <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{tpl.description}</p>
+              <p>{tpl.description}</p>
             </div>
           ))}
         </div>
@@ -117,24 +109,14 @@ const SettingsForm = () => {
         <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <Palette size={16} /> Theme Color
         </label>
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+        <div className="color-bubbles-row">
           {colors.map(color => (
             <button
               key={color}
               onClick={() => updateSettings('primaryColor', color)}
-              style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '50%',
-                backgroundColor: color,
-                border: settings.primaryColor === color ? '2px solid #fff' : 'none',
-                outline: settings.primaryColor === color ? '2px solid #111827' : 'none',
-                cursor: 'pointer',
-                transition: 'transform 0.2s'
-              }}
+              className={`color-select-bubble ${settings.primaryColor === color ? 'active' : ''}`}
+              style={{ backgroundColor: color }}
               title={color}
-              onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
-              onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
             />
           ))}
         </div>
@@ -142,13 +124,13 @@ const SettingsForm = () => {
 
       {/* Font Selection */}
       <div style={{ marginBottom: '2rem' }}>
-        <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
           <Type size={16} /> Typography
         </label>
         <select 
           value={settings.fontFamily}
           onChange={(e) => updateSettings('fontFamily', e.target.value)}
-          style={{ width: '100%', padding: '0.75rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}
+          className="font-select-input"
         >
           {fonts.map(font => (
             <option key={font.name} value={font.name}>{font.label}</option>

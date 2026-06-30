@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '../../context/AuthContext';
+import { X, Mail, Lock, Loader2 } from 'lucide-react';
 
 const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
   const { signIn, signUp } = useAuth();
@@ -30,62 +32,97 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
     }
   };
 
-  return (
-    <div style={{
-      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-      backgroundColor: 'rgba(0,0,0,0.5)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      zIndex: 1000
-    }}>
-      <div style={{
-        backgroundColor: 'var(--surface-color)', padding: '2rem', borderRadius: 'var(--radius-lg)',
-        width: '100%', maxWidth: '400px', boxShadow: 'var(--shadow-lg)'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 700 }}>
-            {isLogin ? 'Sign In to Download' : 'Create an Account'}
-          </h2>
-          <button onClick={onClose} style={{ fontSize: '1.5rem', lineHeight: 1, color: 'var(--text-muted)' }}>&times;</button>
+  const modalContent = (
+    <div className="modal-overlay" onClick={onClose}>
+      <div
+        className="modal-container"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="modal-decor-glow" />
+
+        {/* Header */}
+        <div className="modal-header">
+          <div>
+            <h2>{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.25rem' }}>
+              {isLogin ? 'Sign in to download & manage resumes' : 'Get started with your free account'}
+            </p>
+          </div>
+          <button onClick={onClose} className="modal-close-x">
+            <X size={18} />
+          </button>
         </div>
 
-        {error && <div style={{ color: '#dc2626', backgroundColor: '#fef2f2', padding: '0.75rem', borderRadius: 'var(--radius-md)', marginBottom: '1rem', fontSize: '0.875rem' }}>{error}</div>}
+        {/* Error */}
+        {error && (
+          <div className="modal-error-box">
+            {error}
+          </div>
+        )}
 
-        <form onSubmit={handleSubmit}>
+        {/* Form */}
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           <div className="form-group">
             <label className="form-label">Email</label>
-            <input 
-              type="email" 
-              required 
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-            />
+            <div className="form-input-icon-wrapper">
+              <Mail size={16} className="icon" />
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="form-input"
+              />
+            </div>
           </div>
           <div className="form-group">
             <label className="form-label">Password</label>
-            <input 
-              type="password" 
-              required 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              minLength={6}
-            />
+            <div className="form-input-icon-wrapper">
+              <Lock size={16} className="icon" />
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                minLength={6}
+                className="form-input"
+              />
+            </div>
           </div>
-          <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '0.5rem' }} disabled={loading}>
-            {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Sign Up')}
+          <button
+            type="submit"
+            className="btn btn-primary"
+            style={{ width: '100%', padding: '0.85rem' }}
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <Loader2 size={16} className="loader-spinner" style={{ margin: 0, height: '16px', width: '16px' }} />
+                <span>Processing...</span>
+              </>
+            ) : (
+              isLogin ? 'Sign In' : 'Sign Up'
+            )}
           </button>
         </form>
 
-        <div style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.875rem' }}>
-          {isLogin ? "Don't have an account? " : "Already have an account? "}
-          <button onClick={() => setIsLogin(!isLogin)} style={{ color: 'var(--primary-color)', fontWeight: 600, textDecoration: 'underline' }}>
+        {/* Toggle */}
+        <div style={{ marginTop: '1.5rem', textAlign: 'center', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+          {isLogin ? "Don't have an account? " : 'Already have an account? '}
+          <button
+            onClick={() => setIsLogin(!isLogin)}
+            style={{ fontWeight: 600, color: 'var(--primary-color)', cursor: 'pointer', border: 'none', background: 'none' }}
+          >
             {isLogin ? 'Sign Up' : 'Sign In'}
           </button>
         </div>
       </div>
     </div>
   );
+
+  return createPortal(modalContent, document.body);
 };
 
 export default AuthModal;

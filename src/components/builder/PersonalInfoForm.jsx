@@ -27,7 +27,7 @@ const PersonalInfoForm = () => {
 
   return (
     <div className="form-section">
-      <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '1.5rem', color: 'var(--primary-color)' }}>Personal Information</h3>
+      <h3>Personal Information</h3>
       
       <div className="grid-2">
         <div className="form-group">
@@ -39,6 +39,7 @@ const PersonalInfoForm = () => {
             value={personalInfo.firstName} 
             onChange={handleChange} 
             placeholder="John" 
+            className="form-input"
           />
         </div>
         <div className="form-group">
@@ -50,19 +51,20 @@ const PersonalInfoForm = () => {
             value={personalInfo.lastName} 
             onChange={handleChange} 
             placeholder="Doe" 
+            className="form-input"
           />
         </div>
       </div>
 
       <div className="form-group">
         <label className="form-label" htmlFor="photo">Profile Photo (Optional)</label>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div className="photo-upload-container">
           {personalInfo.photo ? (
-            <div style={{ position: 'relative', width: '60px', height: '60px' }}>
-              <img src={personalInfo.photo} alt="Profile" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+            <div className="photo-preview-wrapper">
+              <img src={personalInfo.photo} alt="Profile" />
               <button 
                 onClick={removePhoto} 
-                style={{ position: 'absolute', top: '-5px', right: '-5px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '50%', width: '20px', height: '20px', cursor: 'pointer', fontSize: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                className="btn-photo-delete"
               >
                 ×
               </button>
@@ -73,7 +75,7 @@ const PersonalInfoForm = () => {
             id="photo" 
             accept="image/*"
             onChange={handlePhotoUpload}
-            style={{ flex: 1 }}
+            className="photo-input-file"
           />
         </div>
       </div>
@@ -88,6 +90,7 @@ const PersonalInfoForm = () => {
             value={personalInfo.email} 
             onChange={handleChange} 
             placeholder="john.doe@example.com" 
+            className="form-input"
           />
         </div>
         <div className="form-group">
@@ -99,6 +102,7 @@ const PersonalInfoForm = () => {
             value={personalInfo.phone} 
             onChange={handleChange} 
             placeholder="+1 234 567 8900" 
+            className="form-input"
           />
         </div>
       </div>
@@ -112,6 +116,7 @@ const PersonalInfoForm = () => {
           value={personalInfo.address} 
           onChange={handleChange} 
           placeholder="New York, NY" 
+          className="form-input"
         />
       </div>
 
@@ -125,6 +130,7 @@ const PersonalInfoForm = () => {
             value={personalInfo.linkedin} 
             onChange={handleChange} 
             placeholder="linkedin.com/in/johndoe" 
+            className="form-input"
           />
         </div>
         <div className="form-group">
@@ -136,6 +142,7 @@ const PersonalInfoForm = () => {
             value={personalInfo.portfolio} 
             onChange={handleChange} 
             placeholder="johndoe.dev" 
+            className="form-input"
           />
         </div>
       </div>
@@ -149,6 +156,7 @@ const PersonalInfoForm = () => {
           onChange={handleChange} 
           placeholder="Brief overview of your experience and goals..."
           rows={4}
+          className="form-textarea"
         />
       </div>
     </div>
