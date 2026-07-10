@@ -46,7 +46,12 @@ const Auth = () => {
         setPassword('');
       }
     } catch (err) {
-      setError(err.message || 'An error occurred during authentication.');
+      const message = err.message || 'An error occurred during authentication.';
+      if (message.toLowerCase().includes('failed to fetch') || message.toLowerCase().includes('networkerror')) {
+        setError('Unable to connect to the server. Please check your internet connection and try again.');
+      } else {
+        setError(message);
+      }
     } finally {
       setLoading(false);
     }
